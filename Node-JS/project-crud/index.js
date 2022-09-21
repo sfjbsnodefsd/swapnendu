@@ -29,3 +29,26 @@ app.get('/getemployees', (res, req) => {
         else console.log(err);
     });
 });
+
+//get employee by id
+
+app.get('/getemployee/:id', (req, res) => {
+    mysqlConnection.query('select * from employee where EmpID = ?', [req.params.id], (err, rows, feilds) => {
+        if (!err) {
+            console.log(rows);
+        }
+        else console.log(err);
+    });
+});
+
+
+//get employee by id
+
+app.delete('/deleteemployee/:id', (req, res) => {
+    mysqlConnection.query('Delete from employee where EmpID = ?', [req.params.id], (err, rows, feilds) => {
+        if (!err) {
+            res.send("Deleted successfull for id: "+ req.params.id);
+        }
+        else console.log(err);
+    });
+});
