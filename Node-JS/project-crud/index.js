@@ -9,7 +9,8 @@ var mysqlConnection = mysql.createConnection({
     host: "localhost",
     user: "root",
     password: "root",
-    database: "employeedb"
+    database: "employeedb",
+    multipleStatements:true
 });
 
 mysqlConnection.connect((err) => {
@@ -24,7 +25,7 @@ app.listen(3000, () => console.log("Express server running at port 3000"));
 app.get('/getemployees', (res, req) => {
     mysqlConnection.query('select * from employee', (err, rows, feilds) => {
         if (!err) {
-            console.log(rows);
+            req.send(rows);
         }
         else console.log(err);
     });
@@ -43,12 +44,37 @@ app.get('/getemployee/:id', (req, res) => {
 
 
 //get employee by id
-
 app.delete('/deleteemployee/:id', (req, res) => {
     mysqlConnection.query('Delete from employee where EmpID = ?', [req.params.id], (err, rows, feilds) => {
         if (!err) {
             res.send("Deleted successfull for id: "+ req.params.id);
         }
+        else console.log(err);
+    });
+});
+
+//insert an employee
+app.post('/addemployee', (req, res) => {
+    let emp = req.body;
+    var sql = "SET @EmpID = ?; SET @Name = ?; SET @EmpCode = ?; SET @Salary = ?; \
+    CALL EmployeeAddOrEdit(@EmpID,@Name,@EmpCode,@Salary)"
+    mysqlConnection.query(sql, [emp.EmpID, emp.Name, emp.EmpCode, emp.Salary], (err, rows, feilds) => {
+        if (!err) rows.forEach(element => {
+            if(element.constructor == Array)
+            res.send("Employee Id of the inserted employee is: " +element[0].EmpID);
+    });
+        else console.log(err);
+    });
+});
+
+//insert an employee
+app.put('/updateemployee', (req, res) => {
+    let emp = req.body;
+    var sql = "SET @EmpID = ?; SET @Name = ?; SET @EmpCode = ?; SET @Salary = ?; \
+    CALL EmployeeAddOrEdit(@EmpID,@Name,@EmpCode,@Salary)"
+    mysqlConnection.query(sql, [emp.EmpID, emp.Name, emp.EmpCode, emp.Salary], (err, rows, feilds) => {
+        if (!err)        
+        res.send("Employee Updatesd Successfully");
         else console.log(err);
     });
 });
