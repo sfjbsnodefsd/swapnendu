@@ -1,6 +1,6 @@
-const {createpool} = require("mysql");
+const {createPool} = require("mysql");
 
-const pool = createpool({
+const pool = createPool({
     port:process.env.DB_PORT,
     host:process.env.DB_HOST,
     user:process.env.DB_USER,
