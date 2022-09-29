@@ -1,12 +1,12 @@
 {
-  "name": "jwt-auth-project",
+  "name": "auth-app",
   "version": "1.0.0",
-  "description": "jwt application with mysql",
+  "description": "this is a node js app that we will use to perform rest api functions and create jwt token",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start":"nodemon app.js"
   },
-  "author": "",
+  "author": "Swapnendu",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.0.1",
