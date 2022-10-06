@@ -5,6 +5,8 @@ const PORT = process.env.PORT || 5001;
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 const amqp = require("amqplib");
+const Product = require("./Product");
+const isAuthenticated = require("../isAuthenticated")
 app.use(express.json());
 
 mongoose.connect(
@@ -28,7 +30,18 @@ await channel.assertQueue("PRODUCT")
 
 connect();
 
+//Create New product
 
-app.listen(PORT, () => {
+//Bye a new product
+
+app.post("/product/create", isAuthenticated, async(req, res) => {
+  const {name, description, price} = req.body;
+  const newProduct = new Product({
+    name, description, price
+  });
+  return res.json(newProduct);
+})
+
+app.listen(5001, () => {
     console.log(`Product service at ${PORT}`);
 });
