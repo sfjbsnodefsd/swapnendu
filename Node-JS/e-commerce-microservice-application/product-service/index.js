@@ -10,22 +10,22 @@ const isAuthenticated = require("../isAuthenticated")
 app.use(express.json());
 
 mongoose.connect(
-    "mongodb://localhost:27017/product-service",
-    {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-    },
-    () => {
-      console.log(`auth service DB  Connected`);
-    }
-  );
+  "mongodb://localhost:27017/product-service",
+  {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  },
+  () => {
+    console.log(`auth service DB  Connected`);
+  }
+);
 
-async function connect(){
-    const amqpServer = "amqp://localhost:5672";
-    connection = await amqp.connect(amqpServer);
-    channel = await connection.createChannel();
+async function connect() {
+  const amqpServer = "amqp://localhost:5672";
+  connection = await amqp.connect(amqpServer);
+  channel = await connection.createChannel();
 
-await channel.assertQueue("PRODUCT")
+  await channel.assertQueue("PRODUCT")
 }
 
 connect();
@@ -34,14 +34,21 @@ connect();
 
 //Bye a new product
 
-app.post("/product/create", isAuthenticated, async(req, res) => {
-  const {name, description, price} = req.body;
+app.post("/product/create", isAuthenticated, async (req, res) => {
+  const { name, description, price } = req.body;
   const newProduct = new Product({
     name, description, price
   });
   return res.json(newProduct);
-})
+});
+
+//User will send a list of product they will be identify by productid
+
+app.post("/product/buy", isAuthenticated, async(req, res) => {
+  const [ids] = req.body;
+  const products = await Product.find(_id, { $in: ids });
+});
 
 app.listen(5001, () => {
-    console.log(`Product service at ${PORT}`);
+  console.log(`Product service at ${PORT}`);
 });
